@@ -4,16 +4,16 @@ on:
   workflow_call:
     inputs:
       python-version:
-        description: 'Python version to use'
+        description: "Python version to use"
         required: false
         type: string
-        default: '3.11'
+        default: "3.11"
     secrets:
       API_KEY:
         required: false
     outputs:
       test-result:
-        description: 'Test execution result'
+        description: "Test execution result"
         value: ${{ jobs.test.outputs.result }}
 
 jobs:
@@ -27,9 +27,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install flake8
         run: |
           python -m pip install --upgrade pip
           pip install flake8
@@ -45,8 +45,7 @@ jobs:
       result: ${{ steps.test-step.outcome }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -79,17 +78,17 @@ jobs:
           path: .coverage
 
   deploy:
-  name: Deploy to Production
-  needs: [lint, test]
-  runs-on: ubuntu-latest
-  if: |
-    github.ref == 'refs/heads/main' &&
-    github.event_name == 'push' &&
-    success()
+    name: Deploy to Production
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      success()
 
-  steps:
-    - name: Simulate deployment
-      run: |
-        echo "Deploying to production..."
-        echo "Environment: Production"
-        echo "Version: ${{ github.sha }}"
+    steps:
+      - name: Simulate deployment
+        run: |
+          echo "Deploying to production..."
+          echo "Environment: Production"
+          echo "Version: ${{ github.sha }}"
