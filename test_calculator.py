@@ -2,6 +2,7 @@ import pytest
 from calculator import add, subtract, multiply, divide, power
 
 
+@pytest.mark.edge
 def test_add():
     """Test addition function."""
     assert add(2, 3) == 5
@@ -23,6 +24,7 @@ def test_multiply():
     assert multiply(0, 5) == 0
 
 
+@pytest.mark.edge
 def test_divide():
     """Test division function."""
     assert divide(8, 2) == 4
@@ -30,12 +32,14 @@ def test_divide():
     assert divide(-10, 2) == -5
 
 
+@pytest.mark.edge
 def test_divide_by_zero():
     """Test that dividing by zero raises an error."""
     with pytest.raises(ValueError):
         divide(10, 0)
 
 
+@pytest.mark.edge
 def test_power():
     """Test power function."""
     assert power(2, 3) == 8
