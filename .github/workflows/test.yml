@@ -6,42 +6,70 @@ on:
 
 jobs:
   test:
+    name: Cross-Platform Tests
     runs-on: ${{ matrix.os }}
-    
+
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.9', '3.11', '3.12']
-        
-        # Exclude specific combinations
+        python-version: ["3.9", "3.11", "3.12"]
+
         exclude:
           - os: macos-latest
-            python-version: '3.9'
-        
-        # Include additional specific combinations
+            python-version: "3.9"
+
         include:
           - os: ubuntu-latest
-            python-version: '3.13-dev'
+            python-version: "3.13-dev"
             experimental: true
-      
-      fail-fast: false
-    
-    # Allow experimental jobs to fail without failing the workflow
+
     continue-on-error: ${{ matrix.experimental == true }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run pytest
-        run: pytest -v
+        run: python -m pytest -v
+
+  test-scenarios:
+    name: Test ${{ matrix.scenario.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scenario:
+          - name: "basic-operations"
+            marker: "not slow"
+          - name: "edge-cases"
+            marker: "edge"
+          - name: "performance"
+            marker: "slow"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-benchmark
+
+      - name: Run ${{ matrix.scenario.name }} tests
+        run: python -m pytest -v -m "${{ matrix.scenario.marker }}"
