@@ -7,21 +7,20 @@ on:
     branches: [ main ]
 
 jobs:
-  # Call the reusable workflow with default settings
+  # Default test run
   test-default:
     uses: ./.github/workflows/reusable-test.yml
     secrets:
       API_KEY: ${{ secrets.API_KEY }}
-  
-  # Call the reusable workflow with custom settings
+
+  # Custom Python version test run
   test-custom:
     uses: ./.github/workflows/reusable-test.yml
     with:
       python-version: '3.12'
-      test-command: 'pytest -v --cov'
     secrets:
       API_KEY: ${{ secrets.API_KEY }}
-  
+
   # Use the output from reusable workflow
   report:
     needs: test-default
