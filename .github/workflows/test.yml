@@ -1,3 +1,15 @@
+# .github/workflows/test.yml
+
+name: Run Tests
+
+# This workflow runs when you push code or create a pull request
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Jobs are the work that gets done
 jobs:
   test:
     name: Test Calculator
